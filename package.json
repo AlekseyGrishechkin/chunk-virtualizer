@@ -1,17 +1,39 @@
 {
-  "name": "virtual-viewport",
+  "name": "react-virtual-viewport",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "A high-performance React hook for universal list virtualization and infinite scrolling.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
   },
-  "keywords": [],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "keywords": [
+    "react",
+    "virtual-scroll",
+    "infinite-scroll",
+    "viewport",
+    "windowing",
+    "carousel"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
   "devDependencies": {
-    "@types/react": "^19.3.0",
-    "tsup": "^8.5.1",
-    "typescript": "^7.0.2"
+    "@types/react": "^18.3.11",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2"
   }
 }
