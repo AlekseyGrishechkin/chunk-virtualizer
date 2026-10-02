@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect, useMemo } from 'react'
+import { useCallback, useState, useEffect, useMemo } from 'react'
 
 export interface UseVirtualViewportOptions {
   itemCount: number
@@ -45,7 +45,6 @@ export function useVirtualViewport({
   const isVertical = direction === 'vertical'
   const safeItemSize = Math.max(1, itemSize)
 
-  // 1. Сброс при изменении внешнего триггера
   useEffect(() => {
     setVisibleCount(initialCount)
     const container = scrollContainerRef.current
@@ -56,7 +55,6 @@ export function useVirtualViewport({
     }
   }, [initialCount, resetTrigger, isVertical, scrollContainerRef])
 
-  // 2. Трекинг размеров контейнера (ResizeObserver)
   useEffect(() => {
     const container = scrollContainerRef.current
     if (!container) return
@@ -78,7 +76,6 @@ export function useVirtualViewport({
     return () => resizeObserver.disconnect()
   }, [scrollContainerRef, isVertical])
 
-  // 3. Высокопроизводительный листенер скролла с requestAnimationFrame
   useEffect(() => {
     const container = scrollContainerRef.current
     if (!container) return
@@ -99,7 +96,6 @@ export function useVirtualViewport({
     }
   }, [scrollContainerRef, isVertical])
 
-  // 4. Твоя чистая логика Infinite Scroll (Исправленная и быстрая)
   useEffect(() => {
     if (visibleCount >= itemCount) return
 
@@ -112,7 +108,6 @@ export function useVirtualViewport({
     }
   }, [scrollTop, containerSize, visibleCount, itemCount, step, safeItemSize])
 
-  // 5. Твой правильный динамический расчет виртуальной геометрии
   const { virtualItems, totalSize } = useMemo(() => {
     const totalSize = visibleCount * safeItemSize
 
