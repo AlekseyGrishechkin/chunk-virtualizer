@@ -1,5 +1,5 @@
 {
-  "name": "react-virtual-viewport",
+  "name": "@aleksey_grishechkin/react-virtual-viewport",
   "version": "1.0.0",
   "description": "A high-performance React hook for universal list virtualization and infinite scrolling.",
   "main": "./dist/index.js",
