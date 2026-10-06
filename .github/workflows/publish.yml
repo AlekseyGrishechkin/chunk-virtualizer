@@ -10,9 +10,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      # 1. Clone the repository down onto the runner instance
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Allocate designated stable runtime environments
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,6 +25,9 @@ jobs:
 
       - name: Run Type Check
         run: npx tsc --noEmit
+
+      - name: Run Unit Tests 🧪
+        run: npm run test
 
       - name: Build package
         run: npm run build
