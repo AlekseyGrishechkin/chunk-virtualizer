@@ -1,45 +1,43 @@
-# @aleksey_grishechkin/react-virtual-viewport ⚡
+# @aleksey_grishechkin/react-chunk-virtualizer
 
-A ultra-lightweight, high-performance, and **zero-dependency** React hook for universal list virtualization (windowing) and dynamic infinite scrolling. 
+A React hook for list virtualization (windowing) that renders items incrementally in chunks as the user scrolls. It keeps the DOM node count stable on large datasets by rendering only the visible viewport items plus a small buffer.
 
-Engineered to handle massive datasets (**20,000+ items / 90MB+ JSON payloads**) without a single frame drop, maintaining a consistent 60 FPS by rendering only what's visible in the viewport using `requestAnimationFrame`.
+## Features
 
-## Key Features 🚀
-
-- 📦 **Ultra-lightweight:** ~1.5 KB minified (zero external dependencies).
-- 🔄 **Universal Geometry:** Works seamlessly with both **vertical** lists and **horizontal** carousels out of the box.
-- 📏 **Layout Shift Resilient:** Powered by `ResizeObserver` to dynamically track container size changes.
-- 🏎️ **Passive Scrolling & rAF:** Uses passive event listeners and `requestAnimationFrame` to ensure butter-smooth scrolling.
-- 🛡️ **Strict Mode & React 18/19 Ready:** Fully compatible with concurrent rendering features.
+- **Hybrid Rendering:** Combines progressive chunk loading with virtual windowing.
+- **ResizeObserver Integration:** Automatically tracks the scroll container dimensions.
+- **Scroll Optimization:** Uses `requestAnimationFrame` and passive event listeners to throttle scroll updates.
+- **No Dependencies:** Written in TypeScript with zero external dependencies.
+- **Bidirectional:** Supports both vertical lists and horizontal carousels.
 
 ---
 
 ## Installation
 
 ```bash
-npm install @aleksey_grishechkin/react-virtual-viewport
+npm install @aleksey_grishechkin/react-chunk-virtualizer
 # or
-yarn add @aleksey_grishechkin/react-virtual-viewport
+yarn add @aleksey_grishechkin/react-chunk-virtualizer
 # or
-pnpm add @aleksey_grishechkin/react-virtual-viewport
+pnpm add @aleksey_grishechkin/react-chunk-virtualizer
 ```
 
 ---
 
-## Usage Examples
+## Usage
 
-### 1. Vertical Big Data List (e.g., Metrics, Logs, Heavy Tables)
+### 1. Vertical List
 
 ```tsx
 import React, { useRef } from 'react';
-import { useVirtualViewport } from '@aleksey_grishechkin/react-virtual-viewport';
+import { useChunkVirtualizer } from '@aleksey_grishechkin/react-chunk-virtualizer';
 
-const HeavyList = ({ largeDataArray }) => {
+const VerticalList = ({ data }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { virtualItems, totalSize } = useVirtualViewport({
-    itemCount: largeDataArray.length,
-    itemSize: 40, // fixed height of each row in px
+  const { virtualItems, totalSize } = useChunkVirtualizer({
+    itemCount: data.length,
+    itemSize: 40, // Item height in pixels
     scrollContainerRef: containerRef,
     direction: 'vertical',
     overscan: 5,
@@ -50,10 +48,9 @@ const HeavyList = ({ largeDataArray }) => {
       ref={containerRef}
       style={{ height: '500px', overflowY: 'auto', position: 'relative' }}
     >
-      {/* Absolute boundary spacer tracking the simulated height */}
       <div style={{ height: `${totalSize}px`, width: '100%', position: 'relative' }}>
         {virtualItems.map((virtualItem) => {
-          const item = largeDataArray[virtualItem.index];
+          const item = data[virtualItem.index];
           return (
             <div
               key={virtualItem.index}
@@ -66,7 +63,7 @@ const HeavyList = ({ largeDataArray }) => {
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              Row index: {virtualItem.index} - {item.title}
+              {item.title}
             </div>
           );
         })}
@@ -76,27 +73,27 @@ const HeavyList = ({ largeDataArray }) => {
 };
 ```
 
-### 2. Horizontal Virtualized Carousel
+### 2. Horizontal Carousel
 
 ```tsx
 import React, { useRef } from 'react';
-import { useVirtualViewport } from '@aleksey_grishechkin/react-virtual-viewport';
+import { useChunkVirtualizer } from '@aleksey_grishechkin/react-chunk-virtualizer';
 
-const VirtualCarousel = ({ images }) => {
-  const carouselRef = useRef<HTMLDivElement>(null);
+const HorizontalCarousel = ({ items }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const { virtualItems, totalSize } = useVirtualViewport({
-    itemCount: images.length,
-    itemSize: 300, // fixed width of each slide in px
-    scrollContainerRef: carouselRef,
+  const { virtualItems, totalSize } = useChunkVirtualizer({
+    itemCount: items.length,
+    itemSize: 300, // Item width in pixels
+    scrollContainerRef: containerRef,
     direction: 'horizontal',
     overscan: 3,
   });
 
   return (
     <div
-      ref={carouselRef}
-      style={{ width: '100%', overflowX: 'auto', position: 'relative', display: 'flex' }}
+      ref={containerRef}
+      style={{ width: '100%', overflowX: 'auto', position: 'relative' }}
     >
       <div style={{ width: `${totalSize}px`, height: '200px', position: 'relative' }}>
         {virtualItems.map((virtualItem) => (
@@ -111,7 +108,7 @@ const VirtualCarousel = ({ images }) => {
               transform: `translateX(${virtualItem.start}px)`,
             }}
           >
-            <img src={images[virtualItem.index].url} alt="Slide" style={{ width: '100%', height: '100%' }} />
+            <img src={items[virtualItem.index].url} alt="" style={{ width: '100%', height: '100%' }} />
           </div>
         ))}
       </div>
@@ -124,32 +121,32 @@ const VirtualCarousel = ({ images }) => {
 
 ## API Reference
 
-### `useVirtualViewport(options)`
+### `useChunkVirtualizer(options)`
 
-#### Options Configuration
+#### Configuration Options
 
 | Property | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `itemCount` | `number` | *Required* | Total number of elements available in your source data. |
+| `itemCount` | `number` | *Required* | Total number of items in the collection. |
 | `itemSize` | `number` | *Required* | Fixed height (vertical) or width (horizontal) of a single item in pixels. |
-| `scrollContainerRef` | `React.RefObject` | *Required* | Ref pinned to the scrollable wrapper element. |
-| `initialCount` | `number` | `30` | Initial chunk size to draw before triggering expansion thresholds. |
-| `step` | `number` | `20` | Dynamic chunk modifier increment size on upcoming border boundary allocation. |
-| `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | Layout alignment rotation context. |
-| `overscan` | `number` | `5` | Safety padding count rendered immediately outside view allocations to avoid trailing blank spots. |
-| `resetTrigger` | `string \| number \| boolean` | `undefined` | Primitive identifier token context to reset active index pointers (e.g., filter type changes). |
+| `scrollContainerRef` | `React.RefObject` | *Required* | React ref attached to the scrollable container element. |
+| `initialCount` | `number` | `30` | Number of items initially available for rendering before chunk expansion is triggered. |
+| `step` | `number` | `20` | Number of items added to the rendered limit when reaching the threshold boundary. |
+| `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | Layout direction of the list. |
+| `overscan` | `number` | `5` | Number of extra items to render outside the visible viewport boundary to prevent blank spaces. |
+| `resetTrigger` | `any` | `undefined` | A primitive value (string, number, boolean). Changing this value automatically calls the `reset` function (useful for filtering or sorting). |
 
-#### Return Object
+#### Return Value
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
-| `virtualItems` | `VirtualItem[]` | An array of currently sliced invisible and visible elements containing indexes and absolute coordinate mappings. |
-| `totalSize` | `number` | The total aggregate computed tracking track size footprint. Apply this to the parent bounds relative layout track spacer. |
-| `loadedCount` | `number` | Active tracking state of computed preloaded record offsets inside index boundaries. |
-| `reset` | `() => void` | Programmatic handle callback function context allocating standard state rollback variables. |
+| `virtualItems` | `VirtualItem[]` | Array of items that should be rendered in the current viewport window. Each item contains `index`, `size`, and `start` coordinate. |
+| `totalSize` | `number` | The total height or width (in pixels) calculated for the inner wrapper spacer element. |
+| `loadedCount` | `number` | The current total number of items loaded into the chunk pool. |
+| `reset` | `() => void` | Function to manually scroll the container back to `0` and reset the chunk count to `initialCount`. |
 
 ---
 
 ## License
 
-MIT © 2026 AlexeyGrishechkin
+MIT © 2026 Alexey Grishechkin

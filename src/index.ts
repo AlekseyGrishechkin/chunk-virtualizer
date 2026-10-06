@@ -1,2 +1,2 @@
-export { useVirtualViewport } from './useVirtualViewport'
-export type { UseVirtualViewportOptions, UseVirtualViewportReturn, VirtualItem } from './useVirtualViewport'
+export { useVirtualViewport } from './useChunkVirtualizer'
+export type { UseVirtualViewportOptions, UseVirtualViewportReturn, VirtualItem } from './useChunkVirtualizer'
