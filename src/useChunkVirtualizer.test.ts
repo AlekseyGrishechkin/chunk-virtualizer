@@ -2,7 +2,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import { useVirtualViewport } from './useVirtualViewport'
+import { useChunkVirtualizer } from './useChunkVirtualizer'
 import React from 'react'
 
 // 1. Mock global browser API environments
@@ -35,7 +35,7 @@ describe('useVirtualViewport', () => {
   })
 
   it('should initialize geometry state with proper default configurations', () => {
-    const { result } = renderHook(() => useVirtualViewport({
+    const { result } = renderHook(() => useChunkVirtualizer({
       itemCount: 100,
       itemSize: 50,
       scrollContainerRef,
@@ -49,7 +49,7 @@ describe('useVirtualViewport', () => {
   })
 
   it('should guarantee absolute runtime protection against non-valid elements where itemSize <= 0', () => {
-    const { result } = renderHook(() => useVirtualViewport({
+    const { result } = renderHook(() => useChunkVirtualizer({
       itemCount: 100,
       itemSize: 0, // Passing unexpected numerical boundary zero
       scrollContainerRef,
@@ -60,7 +60,7 @@ describe('useVirtualViewport', () => {
   })
 
   it('should properly execute entire transactional interface resetting coordinates along hardware nodes', () => {
-    const { result } = renderHook(() => useVirtualViewport({
+    const { result } = renderHook(() => useChunkVirtualizer({
       itemCount: 100,
       itemSize: 50,
       scrollContainerRef,
