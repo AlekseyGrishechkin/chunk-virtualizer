@@ -1,4 +1,4 @@
-# react-virtual-viewport ⚡
+# @aleksey_grishechkin/react-virtual-viewport ⚡
 
 A ultra-lightweight, high-performance, and **zero-dependency** React hook for universal list virtualization (windowing) and dynamic infinite scrolling. 
 
@@ -17,11 +17,11 @@ Engineered to handle massive datasets (**20,000+ items / 90MB+ JSON payloads**) 
 ## Installation
 
 ```bash
-npm install react-virtual-viewport
+npm install @aleksey_grishechkin/react-virtual-viewport
 # or
-yarn add react-virtual-viewport
+yarn add @aleksey_grishechkin/react-virtual-viewport
 # or
-pnpm add react-virtual-viewport
+pnpm add @aleksey_grishechkin/react-virtual-viewport
 ```
 
 ---
@@ -32,7 +32,7 @@ pnpm add react-virtual-viewport
 
 ```tsx
 import React, { useRef } from 'react';
-import { useVirtualViewport } from 'react-virtual-viewport';
+import { useVirtualViewport } from '@aleksey_grishechkin/react-virtual-viewport';
 
 const HeavyList = ({ largeDataArray }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,7 +80,7 @@ const HeavyList = ({ largeDataArray }) => {
 
 ```tsx
 import React, { useRef } from 'react';
-import { useVirtualViewport } from 'react-virtual-viewport';
+import { useVirtualViewport } from '@aleksey_grishechkin/react-virtual-viewport';
 
 const VirtualCarousel = ({ images }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -113,7 +113,7 @@ const VirtualCarousel = ({ images }) => {
           >
             <img src={images[virtualItem.index].url} alt="Slide" style={{ width: '100%', height: '100%' }} />
           </div>
-        )
+        ))}
       </div>
     </div>
   );
@@ -145,7 +145,7 @@ const VirtualCarousel = ({ images }) => {
 | :--- | :--- | :--- |
 | `virtualItems` | `VirtualItem[]` | An array of currently sliced invisible and visible elements containing indexes and absolute coordinate mappings. |
 | `totalSize` | `number` | The total aggregate computed tracking track size footprint. Apply this to the parent bounds relative layout track spacer. |
-| `visibleCount` | `number` | Active tracking state of computed preloaded record offsets inside index boundaries. |
+| `loadedCount` | `number` | Active tracking state of computed preloaded record offsets inside index boundaries. |
 | `reset` | `() => void` | Programmatic handle callback function context allocating standard state rollback variables. |
 
 ---
